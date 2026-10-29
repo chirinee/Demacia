@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>DEMACIA — Coordination Événementielle</title>
+
+    <link rel="icon" type="image/png" href="favicon5.png">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <a href="#content-area" class="skip-link">Aller au contenu principal</a>
+
+<!-- ═══════════════════════════════════════ TOP BAR ═══ -->
+<header class="top-bar">
+    <div class="brand"><h1>Demacia</h1></div>
+
+    <div class="user-controls">
+        <div class="role-switcher" id="role-switcher" role="radiogroup" aria-label="Changer de rôle utilisateur">
+            <button class="role-btn active" data-role="sarah" role="radio" aria-checked="true">Sarah · Planner</button>
+            <button class="role-btn" data-role="lila" role="radio" aria-checked="false">Lila · Coord.</button>
+            <button class="role-btn" data-role="john" role="radio" aria-checked="false">John · Bénévole</button>
+        </div>
+
+        <div class="sync-indicator" id="sync-indicator" role="button" tabindex="0" aria-label="Statut de connexion : en ligne. Cliquer pour basculer en hors-ligne" title="Cliquez pour simuler la perte de réseau">
+            <span class="sync-dot"></span>
+            <span class="sync-label">En ligne</span>
+        </div>
+
+        <button class="notif-btn" id="notif-btn" aria-label="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notif-panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notif-badge" id="notif-badge">0</span>
+        </button>
+
+        <div class="user-avatar" id="user-avatar">
+            <div class="user-avatar-circle" id="avatar-initials">SM</div>
+            <div class="user-avatar-name">
+                <strong id="avatar-name">Sarah M.</strong>
+                <span id="avatar-role">Wedding planner</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="notif-panel" id="notif-panel" role="region" aria-label="Liste des notifications">
+        <div class="notif-panel-header">
+            <span>Notifications</span>
+            <button class="notif-mark-read" id="notif-mark-read">Tout marquer comme lu</button>
+        </div>
+        <ul class="notif-panel-list" id="notif-panel-list"></ul>
+    </div>
+</header>
+
+<div class="app-body">
+    <!-- ═══════════════════════════════════════ SIDEBAR ═══ -->
+    <aside class="sidebar" aria-label="Navigation principale">
+        <nav>
+            <div class="sidebar-section-label">Navigation</div>
+            <ul id="nav-list">
+                <li><a href="#" class="nav-link active" data-view="dashboard" data-roles="sarah">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    Tableau de bord
+                </a></li>
+                <li><a href="#" class="nav-link" data-view="taskboard" data-roles="sarah,lila">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Taskboard
+                </a></li>
+                <li><a href="#" class="nav-link" data-view="gantt" data-roles="sarah">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="14" y2="6"/><line x1="3" y1="12" x2="20" y2="12"/><line x1="3" y1="18" x2="10" y2="18"/><rect x="14" y="4" width="7" height="4" rx="1"/><rect x="10" y="10" width="10" height="4" rx="1"/></svg>
+                    Planning (Gantt)
+                </a></li>
+                <li><a href="#" class="nav-link" data-view="providers" data-roles="sarah,lila">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Prestataires
+                </a></li>
+                <li><a href="#" class="nav-link" data-view="todo" data-roles="lila">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Mes tâches
+                </a></li>
+                <li><a href="#" class="nav-link" data-view="mobile" data-roles="john">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Mes tâches
+                </a></li>
+                <li><a href="#" class="nav-link" data-view="dayview" data-roles="sarah,lila">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="14" y2="18"/></svg>
+                    Vue Journée
+                </a></li>
+            </ul>
+
+            <div class="sidebar-section-label" data-roles="sarah">Paramètres</div>
+            <ul>
+                <li><a href="#" class="nav-link" data-view="settings" data-roles="sarah">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Configuration
+                </a></li>
+            </ul>
+        </nav>
+
+        <!-- Mini calendrier -->
+        <div class="sidebar-calendar" id="sidebar-calendar" data-roles="sarah,lila">
+            <div class="minical-head">
+                <button class="minical-nav" id="minical-prev" aria-label="Mois précédent">‹</button>
+                <span class="minical-month" id="minical-month" aria-live="polite"></span>
+                <button class="minical-nav" id="minical-next" aria-label="Mois suivant">›</button>
+            </div>
+            <div class="minical-weekdays">
+                <span>lu</span><span>ma</span><span>me</span><span>je</span><span>ve</span><span>sa</span><span>di</span>
+            </div>
+            <div class="minical-days" id="minical-days"></div>
+        </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════ CONTENT ═══ -->
+    <main id="content-area">
+
+        <!-- DASHBOARD -->
+        <div id="view-dashboard" class="view-wrapper">
+            <section class="view-header"><h2>Tableau de bord</h2></section>
+            <section class="view-content">
+                <div class="dashboard-container">
+                    <div class="countdown-banner">
+                        <div class="banner-left">
+                            <span class="banner-count" id="banner-count">J–14</span>
+                            <span class="banner-label">jours restants</span>
+                        </div>
+                        <div class="banner-event">
+                            <strong>Mariage Fernando &amp; Luisa</strong>
+                            5 juillet 2026 · La Ciotat
+                        </div>
+                    </div>
+
+                    <div class="kpi-grid">
+                        <div class="kpi-card"><span class="kpi-label">Projets</span><strong class="kpi-number" id="kpi-projects">0</strong><span class="kpi-sub" id="kpi-projects-sub">0 terminés</span></div>
+                        <div class="kpi-card"><span class="kpi-label">Tâches</span><strong class="kpi-number" id="kpi-tasks">0</strong><span class="kpi-sub" id="kpi-tasks-sub">0 terminées</span></div>
+                        <div class="kpi-card"><span class="kpi-label">Membres</span><strong class="kpi-number" id="kpi-members">0</strong><span class="kpi-sub" id="kpi-members-sub">0 actifs aujourd'hui</span></div>
+                        <div class="kpi-card"><span class="kpi-label">Productivité</span><strong class="kpi-number" id="kpi-productivity">0%</strong><span class="kpi-sub positive" id="kpi-productivity-sub">—</span></div>
+                    </div>
+
+                    <div class="dashboard-bottom">
+                        <div class="chart-card">
+                            <h3>Avancement global</h3>
+                            <div class="donut-wrap">
+                                <svg width="170" height="170" viewBox="0 0 170 170">
+                                    <circle cx="85" cy="85" r="62" fill="none" stroke="#E8EDF2" stroke-width="18"/>
+                                    <circle id="donut-active" cx="85" cy="85" r="62" fill="none" stroke="#F0A500" stroke-width="18" stroke-dasharray="0 389.6" stroke-dashoffset="0" transform="rotate(-90 85 85)"/>
+                                    <circle id="donut-done" cx="85" cy="85" r="62" fill="none" stroke="#1D6FA4" stroke-width="18" stroke-dasharray="0 389.6" stroke-dashoffset="0" transform="rotate(-90 85 85)"/>
+                                    <text id="donut-pct" x="85" y="80" text-anchor="middle" font-family="'DM Mono',monospace" font-size="22" font-weight="500" fill="#880E4F">0%</text>
+                                    <text x="85" y="98" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#880E4F" opacity="0.55">terminé</text>
+                                </svg>
+                                <div class="donut-legend">
+                                    <div class="legend-row"><span class="legend-dot done"></span><span class="legend-name">Terminé</span><span class="legend-pct" id="legend-done-pct">0%</span></div>
+                                    <div class="legend-row"><span class="legend-dot active"></span><span class="legend-name">En cours</span><span class="legend-pct" id="legend-active-pct">0%</span></div>
+                                    <div class="legend-row"><span class="legend-dot todo"></span><span class="legend-name">À faire</span><span class="legend-pct" id="legend-todo-pct">0%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alerts-card">
+                            <h3>Alertes &amp; retards</h3>
+                            <ul class="alert-list" id="dashboard-alerts">
+                                <!-- Rempli dynamiquement par script.js -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TASKBOARD -->
+        <div id="view-taskboard" class="view-wrapper hidden">
+            <section class="view-header tb-header">
+                <h2>Taskboard</h2>
+                <div class="tb-actions">
+                    <div class="tb-search-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text"
+                            class="tb-search-input"
+                            id="tb-search-input"
+                            placeholder="Rechercher une tâche…"
+                            aria-label="Rechercher dans le taskboard">
+                        <button class="tb-search-clear hidden" id="tb-search-clear" aria-label="Effacer la recherche">✕</button>
+                        <span class="tb-search-count hidden" id="tb-search-count"></span>
+                    </div>
+                    <button class="tb-chip" id="tb-filter-btn">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                        <span id="tb-filter-label">Filtrer</span>
+                    </button>
+                    <button class="tb-chip hidden" id="tb-filter-clear" title="Effacer les filtres">✕ Effacer</button>
+                    <button class="tb-chip" id="openAddGroupBtn" data-requires-role="sarah,lila">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Ajouter un groupe
+                    </button>
+                </div>
+            </section>
+            <section class="view-content tb-scroll">
+                <div class="kanban-board" id="kanbanBoard"></div>
+            </section>
+        </div>
+
+        <!-- GANTT -->
+        <div id="view-gantt" class="view-wrapper hidden">
+            <section class="view-header">
+                <h2>Planning (Gantt)</h2>
+                <div class="tb-actions">
+                    <button class="tb-chip" id="gantt-today-btn" title="Aller à aujourd'hui">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Aujourd'hui
+                    </button>
+                    <button class="tb-chip" id="gantt-add-group-btn" data-requires-role="sarah">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Ajouter un groupe
+                    </button>
+                    <button class="tb-chip active" id="gantt-add-task-btn" data-requires-role="sarah">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Nouvelle tâche
+                    </button>
+                </div>
+            </section>
+            <section class="view-content">
+                <div class="gantt-container">
+                    <div class="gantt-layout">
+                        <div class="gantt-tasks" id="gantt-tasks"></div>
+                        <div class="gantt-chart-area">
+                            <div class="gantt-header" id="gantt-header"></div>
+                            <div class="gantt-bars" id="gantt-bars">
+                                <svg class="gantt-deps-svg" id="gantt-deps-svg"></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="gantt-detail-panel" id="gantt-detail" style="display:none">
+                        <div class="gdp-header">
+                            <span class="gdp-close" id="gdp-close" role="button" tabindex="0" aria-label="Fermer le détail">✕</span>
+                            <button class="gdp-delete-btn" id="gdp-delete" data-requires-role="sarah" aria-label="Supprimer la tâche">
+                                Supprimer
+                            </button>
+                            <span class="gdp-badge" id="gdp-status"></span>
+                            <h3 id="gdp-title"></h3>
+                            <p id="gdp-project"></p>
+                        </div>
+                        <div class="gdp-body">
+                            <div class="gdp-row"><span class="gdp-label">Début</span><span id="gdp-start"></span></div>
+                            <div class="gdp-row"><span class="gdp-label">Fin</span><span id="gdp-end"></span></div>
+                            <div class="gdp-row"><span class="gdp-label">Responsable</span><span id="gdp-owner"></span></div>
+                            <div class="gdp-row">
+                                <span class="gdp-label">Avancement</span>
+                                <div class="gdp-progress-wrap"><div class="gdp-progress-fill" id="gdp-progress"></div></div>
+                                <span id="gdp-pct"></span>
+                            </div>
+                            <div class="gdp-row">
+                                <span class="gdp-label">Dépend de</span>
+                                <div class="gdp-deps" id="gdp-deps"></div>
+                            </div>
+                            <div class="gdp-row gdp-note-row"><span class="gdp-label">Note</span><span id="gdp-note"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- PRESTATAIRES -->
+        <div id="view-providers" class="view-wrapper hidden">
+            <section class="view-header">
+                <h2>Prestataires</h2>
+                <div class="tb-actions">
+                    <button class="tb-chip active" id="provider-add-btn" data-requires-role="sarah">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Ajouter un prestataire
+                    </button>
+                </div>
+            </section>
+            <section class="view-content">
+                <div class="providers-grid" id="providers-grid"></div>
+            </section>
+        </div>
+
+        <!-- TODO LIST (Lila) -->
+        <div id="view-todo" class="view-wrapper hidden">
+            <section class="view-header"><h2>Mes tâches</h2></section>
+            <section class="view-content">
+                <div class="todo-container">
+                    <div class="todo-greeting">
+                        <div class="todo-greeting-text">
+                            <strong id="todo-greeting-name">Bonjour</strong>
+                            <span id="todo-greeting-sub">0 tâches pour aujourd'hui</span>
+                        </div>
+                        <button class="todo-add-btn" id="todo-add-btn">+ Nouvelle tâche</button>
+                    </div>
+                        <div class="todo-tabs" id="todo-tabs"></div>
+                        <div class="todo-time-filter" id="todo-time-filter"></div>   <!-- ← ajouter -->
+                        <ul class="todo-list" id="todo-list"></ul>
+                    </div>
+            </section>
+        </div>
+
+        <!-- MOBILE JOHN -->
+        <div id="view-mobile" class="view-wrapper hidden">
+            <section class="view-header"><h2>Vue smartphone</h2></section>
+            <section class="view-content">
+                <div class="mobile-frame">
+                    <div class="mobile-header">
+                        <div class="mobile-avatar">J</div>
+                        <div class="mobile-header-text">
+                            <strong>Bonjour John</strong>
+                            <span id="mobile-greeting-sub">3 tâches à faire</span>
+                        </div>
+                    </div>
+                    <div class="mobile-offline-banner" id="mobile-offline">
+                        ⚠ Hors-ligne — les validations seront synchronisées à la reconnexion
+                    </div>
+
+                    <!-- Onglets Tâches / Aide -->
+                    <div class="mobile-tabs" id="mobile-tabs"></div>
+
+                    <!-- Onglet Tâches -->
+                    <div class="mobile-body" id="mobile-tasks-body">
+                        <div class="mobile-section-label">Aujourd'hui</div>
+                        <ul class="todo-list" id="mobile-todo-list"></ul>
+                    </div>
+
+                    <!-- Onglet Aide -->
+                    <div class="mobile-body hidden" id="mobile-help-body">
+                        <!-- Rempli dynamiquement par help.js -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- DAY VIEW (vue journée avec grille horaire) -->
+        <div id="view-dayview" class="view-wrapper hidden">
+            <section class="view-header dv-header">
+                <div class="dv-header-left">
+                    <h2 id="dayview-title">Aujourd'hui</h2>
+                    <div class="dv-who-toggle" id="dayview-who-toggle"></div>
+                </div>
+                <div class="tb-actions">
+                    <div class="dv-search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="dv-search-input" placeholder="Rechercher une tâche…">
+            <span id="dv-search-count" class="dv-search-count hidden"></span>
+        </div>
+                    <button class="tb-chip" id="dv-prev" title="Jour précédent" aria-label="Jour précédent">‹</button>
+                    <button class="tb-chip" id="dayview-today-btn">Aujourd'hui</button>
+                    <button class="tb-chip" id="dv-next" title="Jour suivant" aria-label="Jour suivant">›</button>
+                    <button class="tb-chip active" id="dv-add-task-btn" data-requires-role="sarah,lila">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Nouvelle tâche
+                    </button>
+                </div>
+            </section>
+            <section class="view-content">
+                <div class="dv-help">
+                    💡 Cliquez sur une tâche pour la modifier · Glissez-la pour la déplacer · Tirez la poignée du bas pour ajuster la durée
+                </div>
+                <div class="dv-scroll" id="dayview-scroll">
+                    <div class="dv-grid" id="dayview-grid"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="view-settings" class="view-wrapper hidden">
+            <section class="view-header"><h2>Configuration</h2></section>
+            <section class="view-content">
+                <div class="settings-container">
+                    <div class="settings-access-warning">
+                        🔒 Cette page n'est accessible qu'au wedding planner (Sarah).
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Événement</h3>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Nom de l'événement</strong>
+                                <span>Affiché dans la bannière du dashboard</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <input type="text" id="set-event-name" value="Mariage Fernando & Luisa">
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Date du jour J</strong>
+                                <span>Sert au compte à rebours et au mini calendrier</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <input type="date" id="set-event-date" value="2026-07-05">
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Lieu</strong>
+                                <span>Adresse ou ville de l'événement</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <input type="text" id="set-event-place" value="La Ciotat">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Notifications</h3>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Toasts de notification</strong>
+                                <span>Afficher les notifications en haut à droite</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <label class="toggle">
+                                    <input type="checkbox" id="set-notif-toast" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Notifier les tâches urgentes</strong>
+                                <span>Créer une notification quand une tâche urgente est ajoutée</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <label class="toggle">
+                                    <input type="checkbox" id="set-notif-urgent" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Notifier les retards de prestataires</strong>
+                                <span>Alerter quand un prestataire passe en "en retard"</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <label class="toggle">
+                                    <input type="checkbox" id="set-notif-late" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Apparence</h3>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Thème</strong>
+                                <span>Palette de couleur de l'application</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <select id="set-theme">
+                                    <option value="rose" selected>Rose (par défaut)</option>
+                                    <option value="violet">Violet</option>
+                                    <option value="bleu">Bleu</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Données</h3>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <strong>Réinitialiser les données démo</strong>
+                                <span>Efface toutes vos modifications et restaure les données initiales</span>
+                            </div>
+                            <div class="settings-row-control">
+                                <button class="btn-danger-outline" id="settings-reset-data">
+                                    Réinitialiser
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="confirm-btns">
+                        <button class="btn-primary" id="settings-save">Enregistrer</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+    </main>
+</div>
+
+<!-- Popup du mini-calendrier -->
+<div class="minical-popup" id="minical-popup">
+    <div class="minical-popup-title" id="minical-popup-title"></div>
+    <ul class="minical-popup-list" id="minical-popup-list"></ul>
+</div>
+
+<!-- ═══════════════════════════════════════ TASK DETAIL SIDE PANEL ═══ -->
+<div id="taskModal" class="side-modal" role="dialog" aria-modal="true" aria-labelledby="sideTaskCrumb">    <div id="taskModalOverlay" class="side-overlay"></div>
+    <div class="side-panel">
+        <div class="side-top">
+            <div class="side-breadcrumb">
+                <span id="sideColLabel" class="side-col-chip"></span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <span id="sideTaskCrumb" class="side-task-crumb"></span>
+            </div>
+            <button id="taskModalClose" class="icon-btn" aria-label="Fermer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div class="side-body">
+            <input type="text" id="sideTitle" class="side-title-input" placeholder="Nom de la tâche…">
+
+            <div class="side-fields">
+                <div class="side-field-row">
+                    <div class="sfl">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Statut
+                    </div>
+                    <div class="sfv"><select id="sideStatus" class="side-select"></select></div>
+                </div>
+                <div class="side-field-row">
+                    <div class="sfl">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Assignés
+                    </div>
+                    <div class="sfv"><input type="text" id="sideAssignee" class="side-input" placeholder="Vide"></div>
+                </div>
+                <div class="side-field-row">
+                    <div class="sfl">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Dates
+                    </div>
+                    <div class="sfv dates-sfv">
+                        <div class="date-pill-wrap">
+                            <button class="date-pill" id="btnDateStart">
+                                <span id="lblDateStart">Début</span>
+                                <span class="date-pill-clear hidden" id="clrDateStart" role="button" tabindex="0" aria-label="Effacer la date de début">×</span>
+                            </button>
+                        </div>
+                        <span class="date-arrow">→</span>
+                        <div class="date-pill-wrap">
+                            <button class="date-pill" id="btnDateEnd">
+                                <span id="lblDateEnd">Échéance</span>
+                                <span class="date-pill-clear hidden" id="clrDateEnd" role="button" tabindex="0" aria-label="Effacer la date d'échéance">×</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-field-row">
+                    <div class="sfl">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Temps estimé
+                    </div>
+                    <div class="sfv"><input type="text" id="sideTime" class="side-input" placeholder="ex: 2h30"></div>
+                </div>
+                <div class="side-field-row">
+                    <div class="sfl">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                        Priorité
+                    </div>
+                    <div class="sfv">
+                        <select id="sidePriority" class="side-select">
+                            <option value="">–</option>
+                            <option value="urgent">🔴 Urgent</option>
+                            <option value="high">🟠 Haute</option>
+                            <option value="normal">🔵 Normale</option>
+                            <option value="low">⚪ Basse</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="side-field-row">
+                    <div class="sfl">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        Étiquettes
+                    </div>
+                    <div class="sfv"><input type="text" id="sideTags" class="side-input" placeholder="ex: Design, Dev"></div>
+                </div>
+            </div>
+
+            <div class="side-desc-block">
+                <div class="side-desc-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                    Description
+                </div>
+                <textarea id="sideDesc" class="side-desc" placeholder="Ajouter une description…"></textarea>
+            </div>
+        </div>
+
+        <div class="side-footer">
+            <button class="btn-primary" id="taskSaveBtn">Enregistrer</button>
+            <button class="btn-danger-outline" id="taskDeleteBtn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                Supprimer
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Date picker popup -->
+<div id="datePicker" class="dp-popup">
+    <div class="dp-left">
+        <div class="dp-shortcut-title">Raccourcis</div>
+        <button class="dp-sc" data-shortcut="today">Aujourd'hui<span id="sc-today"></span></button>
+        <button class="dp-sc" data-shortcut="tomorrow">Demain<span id="sc-tomorrow"></span></button>
+        <button class="dp-sc" data-shortcut="next-week">Semaine prochaine<span id="sc-next-week"></span></button>
+        <button class="dp-sc" data-shortcut="2weeks">Dans 2 semaines<span id="sc-2weeks"></span></button>
+        <button class="dp-sc" data-shortcut="4weeks">Dans 4 semaines<span id="sc-4weeks"></span></button>
+    </div>
+    <div class="dp-right">
+        <div class="dp-nav">
+            <button id="dpPrev" class="dp-nav-btn" aria-label="Mois précédent">‹</button>
+            <span id="dpMonthLabel" class="dp-month-label" aria-live="polite"></span>
+            <button id="dpNext" class="dp-nav-btn" aria-label="Mois suivant">›</button>
+        </div>
+        <div class="dp-weekdays">
+            <span>lu</span><span>ma</span><span>me</span><span>je</span><span>ve</span><span>sa</span><span>di</span>
+        </div>
+        <div class="dp-days-grid" id="dpDays"></div>
+    </div>
+</div>
+
+<!-- Modal confirm suppression -->
+<div id="confirmModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">    <div class="overlay-bg"></div>
+    <div class="confirm-box">
+        <div class="confirm-icon">🗑️</div>
+        <h3 id="confirmTitle">Supprimer ?</h3>
+        <p id="confirmMessage">Cette action est irréversible.</p>
+        <div class="confirm-btns">
+            <button class="btn-ghost" id="confirmCancel">Annuler</button>
+            <button class="btn-danger" id="confirmDelete">Oui, supprimer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ajout groupe (taskboard) -->
+<div id="groupModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="groupModal-title">
+    <div class="overlay-bg" id="groupOverlay"></div>
+    <div class="confirm-box">
+        <h3 id="groupModal-title" style="margin-top:0">Nouveau groupe</h3>
+        <label class="form-label">Nom du groupe</label>
+        <input type="text" id="groupNameInput" class="form-input-full" placeholder="ex: Revue, Bloqué…">
+        <label class="form-label" style="margin-top:14px">Couleur</label>
+        <div class="color-swatch-row" id="colorRow">
+            <span class="cswatch selected" data-color="#7c828d" style="background:#7c828d"></span>
+            <span class="cswatch" data-color="#e9487e" style="background:#e9487e"></span>
+            <span class="cswatch" data-color="#5fccff" style="background:#5fccff"></span>
+            <span class="cswatch" data-color="#F0A500" style="background:#F0A500"></span>
+            <span class="cswatch" data-color="#22c55e" style="background:#22c55e"></span>
+            <span class="cswatch" data-color="#a855f7" style="background:#a855f7"></span>
+            <span class="cswatch" data-color="#ef4444" style="background:#ef4444"></span>
+            <span class="cswatch" data-color="#06b6d4" style="background:#06b6d4"></span>
+        </div>
+        <div class="confirm-btns" style="margin-top:20px">
+            <button class="btn-ghost" id="groupCancel">Annuler</button>
+            <button class="btn-primary" id="groupSaveBtn">Créer le groupe</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal filtre taskboard -->
+<div id="filterModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="filterModal-title">
+    <div class="overlay-bg"></div>
+    <div class="confirm-box">
+        <h3 id="filterModal-title" style="margin-top:0; text-align:left">Filtrer les tâches</h3>
+        <div class="form-field">
+            <label class="form-label">Recherche texte</label>
+            <input type="text" id="flt-text" class="form-input-full" placeholder="Rechercher dans nom, tags, description…">
+        </div>
+        <div class="form-grid-2">
+            <div>
+                <label class="form-label">Priorité</label>
+                <select id="flt-priority" class="form-select-full">
+                    <option value="">Toutes</option>
+                    <option value="urgent">🔴 Urgent</option>
+                    <option value="high">🟠 Haute</option>
+                    <option value="normal">🔵 Normale</option>
+                    <option value="low">⚪ Basse</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Assigné à</label>
+                <input type="text" id="flt-assignee" class="form-input-full" placeholder="ex: Lila">
+            </div>
+        </div>
+        <div class="confirm-btns" style="margin-top:10px">
+            <button class="btn-ghost" id="flt-reset">Tout effacer</button>
+            <button class="btn-primary" id="flt-apply">Appliquer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ajout tâche Gantt -->
+<div id="ganttTaskModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="ganttTaskModal-title">
+    <div class="overlay-bg"></div>
+    <div class="confirm-box">
+        <h3 id="ganttTaskModal-title" style="margin-top:0; text-align:left">Nouvelle tâche</h3>
+        <div class="form-field">
+            <label class="form-label">Nom</label>
+            <input type="text" id="gt-name" class="form-input-full" placeholder="ex: Réservation salle">
+        </div>
+        <div class="form-field">
+            <label class="form-label">Groupe</label>
+            <select id="gt-group" class="form-select-full"></select>
+        </div>
+        <div class="form-grid-2">
+            <div>
+                <label class="form-label">Début</label>
+                <input type="date" id="gt-start" class="form-input-full">
+            </div>
+            <div>
+                <label class="form-label">Fin</label>
+                <input type="date" id="gt-end" class="form-input-full">
+            </div>
+        </div>
+        <div class="form-grid-2">
+            <div>
+                <label class="form-label">Responsable</label>
+                <input type="text" id="gt-owner" class="form-input-full" placeholder="ex: Sarah M.">
+            </div>
+            <div>
+                <label class="form-label">Statut</label>
+                <select id="gt-status" class="form-select-full">
+                    <option value="todo">À faire</option>
+                    <option value="active">En cours</option>
+                    <option value="done">Terminé</option>
+                    <option value="warn">Urgent</option>
+                    <option value="critical">Critique</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-field">
+            <label class="form-label">
+                <input type="checkbox" id="gt-urgent" style="margin-right:6px"> Marquer comme urgent (tag rouge)
+            </label>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Note / Détail</label>
+            <textarea id="gt-note" class="form-input-full" rows="2" placeholder="Optionnel…"></textarea>
+        </div>
+        <div class="confirm-btns" style="margin-top:10px">
+            <button class="btn-ghost" id="gt-cancel">Annuler</button>
+            <button class="btn-primary" id="gt-save">Créer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ajout groupe Gantt -->
+<div id="ganttGroupModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="ganttGroupModal-title">
+    <div class="overlay-bg"></div>
+    <div class="confirm-box">
+        <h3 id="ganttGroupModal-title" style="margin-top:0">Nouveau groupe Gantt</h3>
+        <label class="form-label">Nom du groupe</label>
+        <input type="text" id="gg-name" class="form-input-full" placeholder="ex: Logistique, Médias…">
+        <label class="form-label" style="margin-top:14px">Couleur</label>
+        <div class="color-swatch-row" id="gg-color-row">
+            <span class="cswatch selected" data-color="#1D6FA4" style="background:#1D6FA4"></span>
+            <span class="cswatch" data-color="#e9487e" style="background:#e9487e"></span>
+            <span class="cswatch" data-color="#F0A500" style="background:#F0A500"></span>
+            <span class="cswatch" data-color="#2E7D32" style="background:#2E7D32"></span>
+            <span class="cswatch" data-color="#C62828" style="background:#C62828"></span>
+            <span class="cswatch" data-color="#a855f7" style="background:#a855f7"></span>
+        </div>
+        <div class="confirm-btns" style="margin-top:20px">
+            <button class="btn-ghost" id="gg-cancel">Annuler</button>
+            <button class="btn-primary" id="gg-save">Créer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ajout prestataire -->
+<div id="providerModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="providerModal-title">
+    <div class="overlay-bg"></div>
+    <div class="confirm-box">
+        <h3 id="providerModal-title" style="margin-top:0; text-align:left">Nouveau prestataire</h3>
+        <div class="form-field">
+            <label class="form-label">Nom de la société</label>
+            <input type="text" id="pr-name" class="form-input-full" placeholder="ex: Maison Lefèvre">
+        </div>
+        <div class="form-field">
+            <label class="form-label">Rôle / Service</label>
+            <input type="text" id="pr-role" class="form-input-full" placeholder="ex: Traiteur, DJ, Fleuriste…">
+        </div>
+        <div class="form-grid-2">
+            <div>
+                <label class="form-label">Téléphone</label>
+                <input type="text" id="pr-phone" class="form-input-full" placeholder="06 12 34 56 78">
+            </div>
+            <div>
+                <label class="form-label">Heure d'arrivée prévue</label>
+                <input type="text" id="pr-eta" class="form-input-full" placeholder="14:00">
+            </div>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Statut initial</label>
+            <select id="pr-status" class="form-select-full">
+                <option value="progress">🟠 En cours / À venir</option>
+                <option value="arrived">🟢 Arrivé</option>
+                <option value="late">🔴 En retard</option>
+            </select>
+        </div>
+        <div class="confirm-btns" style="margin-top:10px">
+            <button class="btn-ghost" id="pr-cancel">Annuler</button>
+            <button class="btn-primary" id="pr-save">Créer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ajout todo -->
+<div id="todoModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="todoModal-title">
+    <div class="overlay-bg"></div>
+    <div class="confirm-box" style="width:440px">
+        <h3 id="todoModal-title" style="margin-top:0; text-align:left">Nouvelle tâche</h3>
+        <div class="form-field">
+            <label class="form-label">Intitulé</label>
+            <input type="text" id="td-label" class="form-input-full" placeholder="ex: Accueillir le traiteur">
+        </div>
+        <div class="form-grid-2">
+            <div>
+                <label class="form-label">Date de début</label>
+                <input type="date" id="td-date" class="form-input-full">
+            </div>
+            <div>
+                <label class="form-label">Heure de début</label>
+                <input type="time" id="td-time" class="form-input-full" step="900">
+            </div>
+        </div>
+        <div class="form-grid-2">
+            <div>
+                <label class="form-label">Durée (minutes)</label>
+                <select id="td-duration" class="form-select-full">
+                    <option value="15">15 min</option>
+                    <option value="30">30 min</option>
+                    <option value="45">45 min</option>
+                    <option value="60" selected>1 h</option>
+                    <option value="90">1 h 30</option>
+                    <option value="120">2 h</option>
+                    <option value="180">3 h</option>
+                    <option value="240">4 h</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Assigné à</label>
+                <select id="td-assignee" class="form-select-full">
+                    <option value="lila">Lila (moi)</option>
+                    <option value="john">John</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Catégorie</label>
+            <div class="td-category-row" id="td-category-row">
+                <!-- Rempli dynamiquement -->
+            </div>
+            <select id="td-category" class="form-select-full" style="display:none"></select>
+            <button class="td-cat-add" id="td-cat-add" type="button">+ Nouvelle catégorie</button>
+        </div>
+        <div class="form-field">
+            <label class="form-label">
+                <input type="checkbox" id="td-urgent" style="margin-right:6px"> Marquer comme urgente
+            </label>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Note (optionnel)</label>
+            <textarea id="td-note" class="form-input-full" rows="2"></textarea>
+        </div>
+        <div class="confirm-btns" style="margin-top:10px">
+            <button class="btn-ghost" id="td-cancel">Annuler</button>
+            <button class="btn-primary" id="td-save">Créer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ajout catégorie -->
+<div id="categoryModal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="categoryModal-title">
+    <div class="overlay-bg"></div>
+    <div class="confirm-box">
+        <h3 id="categoryModal-title" style="margin-top:0; text-align:left">Nouvelle catégorie</h3>
+        <div class="form-field">
+            <label class="form-label">Nom</label>
+            <input type="text" id="cat-name" class="form-input-full" placeholder="ex: Musique">
+        </div>
+        <div class="form-grid-2">
+            <div>
+                <label class="form-label">Icône (emoji)</label>
+                <input type="text" id="cat-icon" class="form-input-full" placeholder="🎵" maxlength="2">
+            </div>
+            <div>
+                <label class="form-label">Couleur</label>
+                <div class="color-swatch-row" id="cat-color-row">
+                    <span class="cswatch selected" data-color="#1D6FA4" style="background:#1D6FA4"></span>
+                    <span class="cswatch" data-color="#e9487e" style="background:#e9487e"></span>
+                    <span class="cswatch" data-color="#F0A500" style="background:#F0A500"></span>
+                    <span class="cswatch" data-color="#2E7D32" style="background:#2E7D32"></span>
+                    <span class="cswatch" data-color="#C62828" style="background:#C62828"></span>
+                    <span class="cswatch" data-color="#a855f7" style="background:#a855f7"></span>
+                </div>
+            </div>
+        </div>
+        <div class="confirm-btns" style="margin-top:10px">
+            <button class="btn-ghost" id="cat-cancel">Annuler</button>
+            <button class="btn-primary" id="cat-save">Créer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container - annonces vocales pour lecteurs d'écran -->
+<div class="toast-container" id="toast-container" role="region" aria-label="Notifications" aria-live="polite" aria-atomic="false"></div>
+
+<!-- Scripts modulaires -->
+<script src="script.js"></script>
+<script src="taskboard.js"></script>
+<script src="gantt.js"></script>
+<script src="providers.js"></script>
+<script src="todos.js"></script>
+<script src="dayview.js"></script>
+<script src="help.js"></script>
+<script src="storage.js"></script>
+<script src="a11y.js"></script>
+<script src="init.js"></script>
+
+</body>
+</html>
