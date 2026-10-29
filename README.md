@@ -10,6 +10,16 @@ Projet réalisé dans le cadre de l'UE Interaction Homme-Machine du Master ICO �
 
 **👉 [Essayer l'application en ligne](https://chirinee.github.io/Demacia/)** — rien à installer, il suffit de basculer entre les rôles Sarah, Lila et John en haut de l'écran.
 
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" alt="Tableau de bord de la wedding planner : compte à rebours, KPI, avancement et alertes" width="100%">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/gantt.png" alt="Planning Gantt avec dépendances entre tâches" width="49%">
+  <img src="docs/screenshots/mobile_john.png" alt="Vue smartphone simplifiée du bénévole" width="49%">
+</p>
+<p align="center"><em>Tableau de bord de Sarah, planning Gantt avec dépendances, et vue smartphone de John.</em></p>
+
 ## Équipe
 
 - Nassera Nabgaoui
